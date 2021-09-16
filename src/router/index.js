@@ -1,25 +1,51 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-
+import { createRouter, createWebHashHistory } from 'vue-router';
+import Signin from '../views/Signin';
+import Game from '../views/Game';
+import Menu from '../views/Menu';
+import store from '../store';
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+	{
+		path: '/signin',
+		component: Signin,
+	},
+	{
+		path: '/game',
+		meta: {
+			requiresAuth: true,
+		},
+		component: Game,
+	},
+	{
+		path: '/menu',
+		meta: {
+			requiresAuth: true,
+		},
+		component: Menu,
+	},
+	{
+		path: '/:pathMatch(.*)*',
+		redirect: (to) => {
+			return '/signin';
+		},
+	},
+];
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
+	history: createWebHashHistory(),
+	routes,
+});
 
-export default router
+router.beforeEach(async (to, from, next) => {
+	await store.dispatch('authJwt');
+	if (to.matched.some((record) => record.meta.requiresAuth)) {
+		if (store.state.auth) {
+			next();
+		} else {
+			next({ path: '/signin' });
+		}
+	} else {
+		next();
+	}
+});
+
+export default router;
