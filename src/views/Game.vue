@@ -1,15 +1,21 @@
 <template>
     <div class="tableContainer">
-        <GameTable :tableroBloqueado="!miTurno" @selecciono="jugarTurno" :playerNumber="player" :tableData="tablero"/>
+        <GameTable :tableroBloqueado="!miTurno || winner" @selecciono="jugarTurno" :playerNumber="player" :tableData="tablero"/>
+    </div>
+    <div v-if="winner" class="centerpoint">
+        <FinishAlert :ganador="winner == player" @volver="volver"/>
     </div>
 </template>
 
 <script>
+import FinishAlert from '../components/FinishAlert.vue'
 import GameTable from "../components/GameTable.vue"
+import  gameLogic  from "../utils/tableProviders"
 
 export default {
     components: {
-        GameTable
+        GameTable,
+        FinishAlert
     },
     data(){
         return {
@@ -18,7 +24,8 @@ export default {
                       [0,0,0]],
             gameData: {},
             miTurno: false,
-            player: null
+            player: null,
+            winner: null
         }
     },
     created(){
@@ -28,21 +35,37 @@ export default {
         }else this.player = 2
         this.$socket.$subscribe('cargarTablero', payload => {
             this.tablero[payload.f][payload.c] = payload.player
+            this.comprobarGanador()
             this.miTurno = true
         });
     },
     methods: {
         jugarTurno(data){
-            console.log('oprimio')
             this.miTurno = false
             this.tablero[data.f][data.c] = this.player
+            this.comprobarGanador()
             this.$socket.client.emit('mover', {roomId: this.$store.state.roomId, f: data.f, c:data.c, player: this.player})
+        },
+        comprobarGanador(){
+            const winnerData = gameLogic.getWinner(this.tablero)
+            if(winnerData){
+                this.winner = winnerData.player
+            }
+        },
+        volver(){
+            this.$store.state.roomId = null
+            this.$router.push('/menu')
         }
     }
 }
 </script>
 
 <style scoped>
+    .centerpoint {
+        top: 50%;
+        left: 50%;
+        position: absolute;
+    }
     .tableContainer{
         width: 100vw;
         height: 100vh;

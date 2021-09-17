@@ -1,7 +1,9 @@
 <template>
   <div class="menu">
     <button @click="searchOponent" :disabled="buttonsDisabled"> JUGAR </button>
-    <SearchingPlayer v-if="searchingOponent"/>
+  </div>
+  <div id="centerpoint">
+    <SearchingPlayer v-show="searchingOponent"/>
   </div>
 </template>
 
@@ -43,5 +45,10 @@ export default {
     font-family: Righteous;
     font-size: 60px;
     font-weight: bold;
+  }
+  #centerpoint {
+    top: 50%;
+    left: 50%;
+    position: absolute;
   }
 </style>
