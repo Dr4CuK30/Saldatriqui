@@ -5,9 +5,12 @@ import store from './store';
 import VueSocketIOExt from 'vue-socket.io-extended';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3000', {
-	transports: ['websocket', 'polling'],
-});
+const socket = io(
+	`${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
+	{
+		transports: ['websocket', 'polling'],
+	}
+);
 
 createApp(App)
 	.use(store)
