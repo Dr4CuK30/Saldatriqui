@@ -1,4 +1,7 @@
 <template>
+    <head>
+        <title>Ingresar</title>
+    </head>
     <div class="credits">
         <h1 class="title">SaldaTriqui</h1>
         <h3 class="integrantes">by: Grupito de Modelos II</h3>

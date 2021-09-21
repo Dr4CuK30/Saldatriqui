@@ -7,11 +7,15 @@ const routes = [
 	{
 		path: '/signin',
 		component: Signin,
+		meta: {
+			title: 'Ingresar',
+		},
 	},
 	{
 		path: '/game',
 		meta: {
 			requiresAuth: true,
+			title: 'Jugando',
 		},
 		component: Game,
 	},
@@ -19,6 +23,7 @@ const routes = [
 		path: '/menu',
 		meta: {
 			requiresAuth: true,
+			title: 'Saldatriqui',
 		},
 		component: Menu,
 	},
@@ -46,6 +51,12 @@ router.beforeEach(async (to, from, next) => {
 	} else {
 		next();
 	}
+});
+
+router.afterEach((to, from) => {
+	Vue.nextTick(() => {
+		document.title = 'SaldaTriqui';
+	});
 });
 
 export default router;
