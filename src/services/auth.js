@@ -13,10 +13,14 @@ export default {
 			);
 			if (res.data.token) {
 				localStorage.setItem('token', res.data.token);
-				context.$store.state.user = res.data.usuariox;
+				context.$store.commit(
+					'loadUser',
+					res.data.usuariox
+				);
 				return true;
 			}
 		} catch (e) {
+			console.log(e);
 			return false;
 		}
 	},
@@ -30,6 +34,7 @@ export default {
 				},
 			}
 		);
+		console.log(res);
 		if (res.status == 200) {
 			return true;
 		}

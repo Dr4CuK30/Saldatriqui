@@ -20,7 +20,7 @@ export default {
             password: null,
         }
     },
-    created(){
+    beforeCreate(){
         this.$store.commit('logout');
     },
     methods: {

@@ -18,13 +18,12 @@ const store = createStore({
 	},
 	mutations: {
 		loadUser(state, data) {
-			localStorage.setItem('token', data.jwt);
-			state.userData = data.user;
+			state.userData = data;
 			state.auth = true;
 		},
 		logout(state) {
+			console.log('se salio xd');
 			localStorage.removeItem('token');
-			state.userData = null;
 			state.auth = false;
 		},
 		authState(state, isAuth) {
