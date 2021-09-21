@@ -54,9 +54,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-	Vue.nextTick(() => {
-		document.title = 'SaldaTriqui';
-	});
+	document.title = `${to.meta.title} - SaldaTriqui`;
 });
 
 export default router;
