@@ -34,7 +34,7 @@ export default {
 				},
 			}
 		);
-		console.log(res);
+		store.commit('loadUser', res.data.usuariox);
 		if (res.status == 200) {
 			return true;
 		}

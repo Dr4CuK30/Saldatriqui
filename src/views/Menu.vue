@@ -1,7 +1,8 @@
 <template>
   <div class="menu">
     <h2>Bienvenido <span class="username">{{$store.state.userData.usuario}}</span></h2>
-    <button @click="searchOponent" :disabled="buttonsDisabled">Iniciar Juego</button>
+    <button class="iniciar" @click="searchOponent" :disabled="buttonsDisabled">Iniciar Juego</button><br>
+    <button class="logout" @click="logout">Cerrar Sesión</button>
   </div>
   <div id="centerpoint">
     <SearchingPlayer v-show="searchingOponent"/>
@@ -29,6 +30,9 @@ export default {
       this.searchingOponent = true
       this.buttonsDisabled = true
       this.$socket.client.emit('search', localStorage.getItem('token'))
+    },
+    logout(){
+      this.$router.push('signin')
     }
   },
 }
@@ -41,18 +45,38 @@ export default {
     position: absolute;
     text-align: center;
   }
+
   .menu button{
-    border: 0;  
-    background-color: rgba(0, 0, 0, 0.459);
-    margin-top: 5%;  
+    border: 0;
     font-family: Righteous;
+    border-radius: 10px;
+    padding: 5px 10px 5px 10px;
+  }
+
+  .menu .iniciar{  
+    background-color: rgba(0, 0, 0, 0.459);
+    margin-top: 20%;  
     font-size: 60px;
     font-weight: bold;
-    border-radius: 10px;
     color: #EFBE42;
-    padding: 5px 10px 5px 10px;
     cursor: pointer;
   }
+
+  .menu .iniciar:hover{
+    background-color: rgba(0, 0, 0, 0.719);
+  }
+
+  .menu .logout{
+    margin-top: 40px;
+    background-color: rgb(218, 10, 10);
+    color: white;
+    cursor: pointer;
+  }
+
+  .menu .logout:hover{
+    background-color: rgb(136, 1, 1);
+  }
+
   #centerpoint {
     top: 50%;
     left: 50%;

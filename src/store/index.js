@@ -22,7 +22,6 @@ const store = createStore({
 			state.auth = true;
 		},
 		logout(state) {
-			console.log('se salio xd');
 			localStorage.removeItem('token');
 			state.auth = false;
 		},
