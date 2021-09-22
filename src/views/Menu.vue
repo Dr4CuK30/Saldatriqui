@@ -1,8 +1,32 @@
 <template>
   <div class="menu">
     <h2>Bienvenido <span class="username">{{$store.state.userData.usuario}}</span></h2>
+
+    <div class="match-table">
+      <table>
+        <!--Head-->
+        <tr>
+          <th>Partida</th>
+          <th>Jugador</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+
+        <!--Content/Games-->
+        <tr>
+          <th>1</th>
+          <th>Fulano</th>
+          <th>Esperando...</th>
+          <th><a href="">Unirse</a></th>
+        </tr>
+      </table>
+    </div>
+    
+
     <button class="iniciar" @click="searchOponent" :disabled="buttonsDisabled">Iniciar Juego</button><br>
     <button class="logout" @click="logout">Cerrar Sesión</button>
+
+    
   </div>
   <div id="centerpoint">
     <SearchingPlayer v-show="searchingOponent"/>
@@ -40,10 +64,15 @@ export default {
 
 <style scoped>
   .menu{
-    width: 95%;
+    width: 100%;
     height: 95%;
     position: absolute;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2em 4em;
   }
 
   .menu button{
@@ -55,7 +84,7 @@ export default {
 
   .menu .iniciar{  
     background-color: rgba(0, 0, 0, 0.459);
-    margin-top: 20%;  
+
     font-size: 60px;
     font-weight: bold;
     color: #EFBE42;
@@ -67,7 +96,9 @@ export default {
   }
 
   .menu .logout{
-    margin-top: 40px;
+    width: 10em;
+    font-size: 1.5rem;
+
     background-color: rgb(218, 10, 10);
     color: white;
     cursor: pointer;
@@ -75,6 +106,60 @@ export default {
 
   .menu .logout:hover{
     background-color: rgb(136, 1, 1);
+  }
+
+  .match-table{
+    color: #FFF;
+    font-family: "DM Sans";
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 3em 0;
+  }
+
+  .match-table table{
+    padding: 1.5em;
+    width: 100%;
+    border: solid 2px #b2faff;
+    border-radius: 20px;
+    border-spacing: 0;
+
+    background: rgba(61, 61, 61, 0.548);
+  }
+
+  .match-table table tr{
+    border-radius: 20px;
+    text-align: center;
+    
+  }
+
+  .match-table table tr th{
+    font-weight: 500;
+    font-size: 2.5em;
+    padding: 0.5em 0;
+  }
+
+  .match-table table tr th a{
+    text-decoration: none;
+    color: #FFF;
+  }
+
+  .match-table table tr th:last-child{
+    background-color: rgb(43, 43, 43);
+  }
+
+  .match-table table tr:not(:first-child) th:last-child:hover{
+    cursor: pointer;
+    background-color: rgb(90, 90, 90);
+  }
+
+  .match-table table tr:first-child th{
+    font-weight: 600;
+    background-color: #333333a9;
+  }
+
+  .match-table table tr:nth-child(even){
+    background-color: #70707065;
   }
 
   #centerpoint {
@@ -85,7 +170,7 @@ export default {
   .menu h2{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     color: white;
-    font-size: 40px;
+    font-size: 4rem;
   }
   .username {
     font-family:Righteous;
