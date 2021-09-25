@@ -13,12 +13,19 @@
         </tr>
 
         <!--Content/Games-->
-        <tr>
-          <th>1</th>
-          <th>Fulano</th>
-          <th>Esperando...</th>
-          <th><a href="">Unirse</a></th>
+        <tr v-for="(game, index) in currentRooms" :key="game">
+          <th>{{index}}</th>
+
+          <th v-if="game.isFull">{{game.players[0]/game.players[1]}}</th>
+          <th v-else>{{game.players[0]}}</th>
+
+          <th v-if="game.isFull">En Partida</th>
+          <th v-else>Esperando...</th>
+
+          <th v-if="!game.isFull"><a href="">Unirse</a></th>
+          <th class="roomFull" v-else><a href="#">Lleno</a></th>
         </tr>
+
       </table>
     </div>
     
@@ -35,12 +42,14 @@
 
 <script>
 import SearchingPlayer from '../components/SearchingPlayer.vue'
+import getRoomsMethod from "../services/matches_scs"
 export default {
   components: { SearchingPlayer },
   data(){
     return {
       searchingOponent: false,
-      buttonsDisabled: false
+      buttonsDisabled: false,
+      currentRooms: {}
     }
   },
   created(){
@@ -48,6 +57,7 @@ export default {
       this.$store.state.roomId = payload
       this.$router.push('game')
     });
+    this.getRooms();
   },
   methods: {
     searchOponent(){
@@ -57,6 +67,9 @@ export default {
     },
     logout(){
       this.$router.push('signin')
+    },
+    async getRooms(){
+      this.currentRooms = await getRoomsMethod.getRoomsFromApi(this)
     }
   },
 }
@@ -142,6 +155,15 @@ export default {
   .match-table table tr th a{
     text-decoration: none;
     color: #FFF;
+  }
+
+  .roomFull a{
+    color: rgb(107, 107, 107) !important; 
+    cursor:default !important; 
+  }
+
+  .roomFull{
+    cursor:default !important; 
   }
 
   .match-table table tr th:last-child{
