@@ -6,7 +6,6 @@
       <table>
         <!--Head-->
         <tr>
-          <th>Partida</th>
           <th>Jugador</th>
           <th>Estado</th>
           <th>Acción</th>
@@ -14,24 +13,25 @@
 
         <!--Content/Games-->
         <tr v-for="(game, index) in currentRooms" :key="game">
-          <th>{{index}}</th>
 
           <th v-if="game.isFull">{{game.players[0]/game.players[1]}}</th>
-          <th v-else>{{game.players[0]}}</th>
+          <th v-else>{{game.host}}</th>
 
           <th v-if="game.isFull">En Partida</th>
           <th v-else>Esperando...</th>
 
-          <th v-if="!game.isFull"><a href="">Unirse</a></th>
-          <th class="roomFull" v-else><a href="#">Lleno</a></th>
+          <th v-if="!game.isFull"><button @click="join(index)">Unirse</button></th>
+          <th class="roomFull" v-else><a href="">Lleno</a></th>
         </tr>
 
       </table>
+      
     </div>
-    
+    <button @click="createRoom">Crear Sala</button>
 
     <button class="iniciar" @click="searchOponent" :disabled="buttonsDisabled">Iniciar Juego</button><br>
     <button class="logout" @click="logout">Cerrar Sesión</button>
+    
 
     
   </div>
@@ -53,11 +53,15 @@ export default {
     }
   },
   created(){
-    this.$socket.$subscribe('empezar', payload => {
-      this.$store.state.roomId = payload
-      this.$router.push('game')
+    this.$socket.$subscribe('start', payload => {
+      //console.log(payload)
+      // this.$router.push('game')
+    });
+    this.$socket.$subscribe('hasJoined', payload =>{
+      //console.log(payload)
     });
     this.getRooms();
+
   },
   methods: {
     searchOponent(){
@@ -70,6 +74,17 @@ export default {
     },
     async getRooms(){
       this.currentRooms = await getRoomsMethod.getRoomsFromApi(this)
+    },
+    createRoom(){
+      this.searchingOponent = true
+      this.buttonsDisabled = true
+      this.$socket.client.emit('create',  {"playerId" : localStorage.getItem('token'), "playerName": this.$store.state.userData.usuario})
+    },
+    join(roomId){
+      this.searchingOponent = true
+      this.buttonsDisabled = true
+      this.$socket.client.emit('join',  {"roomId":roomId,"playerId" : localStorage.getItem('token'), "playerName": this.$store.state.userData.usuario})
+      console.log(roomId)
     }
   },
 }

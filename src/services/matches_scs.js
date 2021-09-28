@@ -6,7 +6,7 @@ export default {
 			const res = await axios.get(
 				`${context.$store.getters.getURL}/api/rooms`
 			);
-			console.log(res.data)
+			//console.log(res.data)
 			return res.data
 		} catch (e) {
 			console.log(e);
