@@ -54,11 +54,15 @@ export default {
   },
   created(){
     this.$socket.$subscribe('start', payload => {
-      //console.log(payload)
-      // this.$router.push('game')
+      console.log(payload.roomId)
+      localStorage.setItem('roomId', payload.roomId)
+      this.$router.push('game')
     });
     this.$socket.$subscribe('hasJoined', payload =>{
-      //console.log(payload)
+      console.log("hasjoined: " + payload.hasJoined)
+      if(!payload.hasJoined){
+        console.log("Ocurrio un error al unirse")
+      }
     });
     this.getRooms();
 
@@ -84,7 +88,6 @@ export default {
       this.searchingOponent = true
       this.buttonsDisabled = true
       this.$socket.client.emit('join',  {"roomId":roomId,"playerId" : localStorage.getItem('token'), "playerName": this.$store.state.userData.usuario})
-      console.log(roomId)
     }
   },
 }

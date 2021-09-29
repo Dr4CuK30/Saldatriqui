@@ -19,6 +19,7 @@ export default {
     },
     data(){
         return {
+            roomId: '',
             tablero: [[0,0,0],
                       [0,0,0],
                       [0,0,0]],
@@ -29,11 +30,13 @@ export default {
         }
     },
     created(){
-        if(localStorage.getItem('token').split('.')[1] == this.$store.state.roomId){
+        this.roomId = localStorage.getItem('roomId')
+        if(localStorage.getItem('token').split('.')[1] == this.roomId){
             this.player = 1
             this.miTurno = true
         }else this.player = 2
         this.$socket.$subscribe('cargarTablero', payload => {
+            console.log('cambio')
             this.tablero[payload.f][payload.c] = payload.player
             this.comprobarGanador()
             this.miTurno = true
@@ -44,7 +47,7 @@ export default {
             this.miTurno = false
             this.tablero[data.f][data.c] = this.player
             this.comprobarGanador()
-            this.$socket.client.emit('mover', {roomId: this.$store.state.roomId, f: data.f, c:data.c, player: this.player})
+            this.$socket.client.emit('mover', {roomId: this.roomId, f: data.f, c:data.c, player: this.player})
         },
         comprobarGanador(){
             const winnerData = gameLogic.getWinner(this.tablero)
@@ -53,7 +56,11 @@ export default {
             }
         },
         volver(){
-            this.$store.state.roomId = null
+            this.$socket.client.emit('leave', {
+                playerId: localStorage.getItem('token'), 
+                roomId: this.roomId
+            })
+            localStorage.removeItem('roomId')
             this.$router.push('/menu')
         }
     }
