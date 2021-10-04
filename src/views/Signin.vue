@@ -12,24 +12,38 @@
         <input placeholder="Contraseña" type="password" v-model="password"><br>
         <button type="button" @click="login">Entrar</button>
     </form>
+
+    <modal
+      v-show="isModalVisible"
+      @close="closeModal"
+    />
 </template>
 
 <script>
 import authService from "../services/auth"
+import modal from '../components/LoginErrorModal.vue';
 export default {
+    components : {modal},
     data(){
         return {
             user: null,
             password: null,
+            isModalVisible: false
         }
     },
     beforeCreate(){
         this.$store.commit('logout');
     },
     methods: {
+        showModal() {
+            this.isModalVisible = true;
+        },
+        closeModal() {
+            this.isModalVisible = false;
+        },
         async login(){
             if(await authService.login(this, this.user, this.password)) this.$router.push('menu')
-            else console.log("no entro")
+            else this.showModal()
         }
     }
 }

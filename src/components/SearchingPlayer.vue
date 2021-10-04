@@ -8,7 +8,7 @@
 export default {
     data(){
         return {
-            mensaje: 'Buscando'
+            mensaje: 'Esperando Jugador'
         }
     },
     created(){
@@ -18,7 +18,7 @@ export default {
         animar(){
             setInterval(()=>{
                 this.mensaje+='.'
-                if(this.mensaje.length == 12) this.mensaje = 'Buscando'
+                if(this.mensaje.length == 21) this.mensaje = 'Esperando Jugador'
             },500)
         }
     }
@@ -35,7 +35,7 @@ export default {
         position: relative;
         width: 300px;
         margin-left: -225px;
-        height: 100px;
+        height: 150px;
         margin-top: -100px;
         padding: 20px;
         text-align: center;
