@@ -5,15 +5,21 @@
     <div v-if="winner" class="centerpoint">
         <FinishAlert :ganador="winner == player" @volver="volver"/>
     </div>
+    <div class="options">
+        <button @click="volver">Salir</button>
+    </div>
+    <div class="centerpoint">
+        <SearchingPlayer v-show="turnoDe == 3"/>
+    </div>
 </template>
 
 <script>
 import FinishAlert from '../components/FinishAlert.vue'
 import GameTable from "../components/GameTable.vue"
-import  gameLogic  from "../utils/tableProviders"
-
+import SearchingPlayer from '../components/SearchingPlayer.vue'
 export default {
     components: {
+        SearchingPlayer,
         GameTable,
         FinishAlert
     },
@@ -26,34 +32,36 @@ export default {
             gameData: {},
             miTurno: false,
             player: null,
-            winner: null
+            winner: null,
+            turnoDe: 3,
         }
     },
     created(){
+        this.$socket.client.emit('cargarData', {roomId: localStorage.getItem('roomId')})
         this.roomId = localStorage.getItem('roomId')
         if(localStorage.getItem('token').split('.')[1] == this.roomId){
             this.player = 1
             this.miTurno = true
         }else this.player = 2
         this.$socket.$subscribe('cargarTablero', payload => {
-            console.log('cambio')
-            this.tablero[payload.f][payload.c] = payload.player
-            this.comprobarGanador()
-            this.miTurno = true
+            const { tableroData, turno, evento } = payload
+            this.tablero = tableroData
+            if(evento){
+                if(evento.evento == 'hayGanador') {
+                    this.winner = evento.ganadorData.winner
+                    return
+                }
+                else if(evento.evento == 'empate') console.log('empate')
+            }
+            this.turnoDe = turno
+            turno == this.player ? this.miTurno = true : this.miTurno = false
         });
     },
     methods: {
         jugarTurno(data){
             this.miTurno = false
             this.tablero[data.f][data.c] = this.player
-            this.comprobarGanador()
             this.$socket.client.emit('mover', {roomId: this.roomId, f: data.f, c:data.c, player: this.player})
-        },
-        comprobarGanador(){
-            const winnerData = gameLogic.getWinner(this.tablero)
-            if(winnerData){
-                this.winner = winnerData.player
-            }
         },
         volver(){
             this.$socket.client.emit('leave', {

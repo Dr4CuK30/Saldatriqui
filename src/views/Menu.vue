@@ -14,8 +14,7 @@
         <!--Content/Games-->
         <tr v-for="(game, index) in currentRooms" :key="game">
 
-          <th v-if="game.isFull">{{game.players[0]/game.players[1]}}</th>
-          <th v-else>{{game.host}}</th>
+          <th>{{game.host}}</th>
 
           <th v-if="game.isFull">En Partida</th>
           <th v-else>Esperando...</th>
@@ -27,24 +26,14 @@
       </table>
       
     </div>
-    <button @click="createRoom">Crear Sala</button>
-
-    <button class="iniciar" @click="searchOponent" :disabled="buttonsDisabled">Iniciar Juego</button><br>
+    <button class="iniciar" @click="createRoom" :disabled="buttonsDisabled">Crear Sala</button><br>
     <button class="logout" @click="logout">Cerrar Sesión</button>
-    
-
-    
-  </div>
-  <div id="centerpoint">
-    <SearchingPlayer v-show="searchingOponent"/>
   </div>
 </template>
 
 <script>
-import SearchingPlayer from '../components/SearchingPlayer.vue'
 import getRoomsMethod from "../services/matches_scs"
 export default {
-  components: { SearchingPlayer },
   data(){
     return {
       searchingOponent: false,
@@ -58,21 +47,11 @@ export default {
       localStorage.setItem('roomId', payload.roomId)
       this.$router.push('game')
     });
-    this.$socket.$subscribe('hasJoined', payload =>{
-      console.log("hasjoined: " + payload.hasJoined)
-      if(!payload.hasJoined){
-        console.log("Ocurrio un error al unirse")
-      }
-    });
+  
     this.getRooms();
 
   },
   methods: {
-    searchOponent(){
-      this.searchingOponent = true
-      this.buttonsDisabled = true
-      this.$socket.client.emit('search', localStorage.getItem('token'))
-    },
     logout(){
       this.$router.push('signin')
     },
@@ -80,9 +59,12 @@ export default {
       this.currentRooms = await getRoomsMethod.getRoomsFromApi(this)
     },
     createRoom(){
+      const playerId = localStorage.getItem('token')
+      localStorage.setItem('roomId', playerId.split('.')[1])
       this.searchingOponent = true
       this.buttonsDisabled = true
-      this.$socket.client.emit('create',  {"playerId" : localStorage.getItem('token'), "playerName": this.$store.state.userData.usuario})
+      this.$socket.client.emit('create',  {"playerId" : playerId, "playerName": this.$store.state.userData.usuario})
+      this.$router.push('game')
     },
     join(roomId){
       this.searchingOponent = true
@@ -200,12 +182,6 @@ export default {
 
   .match-table table tr:nth-child(even){
     background-color: #70707065;
-  }
-
-  #centerpoint {
-    top: 50%;
-    left: 50%;
-    position: absolute;
   }
   .menu h2{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
