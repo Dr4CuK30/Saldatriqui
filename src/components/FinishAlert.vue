@@ -1,7 +1,8 @@
 <template>
     <div class="dialog">
         <h1>{{ganador ? 'Has ganado :)' : 'Has perdido :('}}</h1>
-        <button @click="volver">Volver</button>
+        <button class="volver" @click="volver">Menu</button>
+        <button class="siguiente" @click="jugarAgain">Jugar</button>
     </div>
 </template>
 
@@ -14,6 +15,9 @@ export default {
         }
     },
     methods: {
+        jugarAgain(){
+            this.$emit('jugarAgain')
+        },
         volver(){
             this.$emit('volver')
         }
@@ -40,11 +44,17 @@ export default {
         font-size: 17px;
     }
     .dialog button{
+        margin: 10px 10px 5px 10px;
         color: white;
         font-size: 15px;
         border: 0;
-        background-color: rgb(219, 7, 7);
         padding: 3px 10px 3px 10px;
         cursor: pointer;
+    }
+    .siguiente {
+        background-color: rgb(67, 184, 0);
+    }
+    .volver {
+        background-color: rgb(219, 7, 7);
     }
 </style>

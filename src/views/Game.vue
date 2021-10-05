@@ -3,7 +3,7 @@
         <GameTable :tableroBloqueado="!miTurno || winner" @selecciono="jugarTurno" :playerNumber="player" :tableData="tablero"/>
     </div>
     <div v-if="winner" class="centerpoint">
-        <FinishAlert :ganador="winner == player" @volver="volver"/>
+        <FinishAlert :ganador="winner == player" @volver="volver" @jugarAgain="jugarAgain"/>
     </div>
     <div class="options">
         <button @click="volver">Salir</button>
@@ -44,6 +44,7 @@ export default {
             this.miTurno = true
         }else this.player = 2
         this.$socket.$subscribe('cargarTablero', payload => {
+            console.log(payload)
             const { tableroData, turno, evento } = payload
             this.tablero = tableroData
             if(evento){
@@ -65,11 +66,16 @@ export default {
         },
         volver(){
             this.$socket.client.emit('leave', {
-                playerId: localStorage.getItem('token'), 
+                playerId: this.$store.state.userData.uid, 
                 roomId: this.roomId
             })
             localStorage.removeItem('roomId')
             this.$router.push('/menu')
+        },
+        jugarAgain(){
+            this.turnoDe = 3
+            this.winner = null
+            this.$socket.client.emit('reiniciar', {roomId: this.roomId, playerId: this.player})
         }
     }
 }
@@ -83,6 +89,6 @@ export default {
     }
     .tableContainer{
         width: 100vw;
-        height: 100vh;
+        height: 70vh;
     }
 </style>

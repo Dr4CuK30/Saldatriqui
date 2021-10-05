@@ -63,13 +63,13 @@ export default {
       localStorage.setItem('roomId', playerId.split('.')[1])
       this.searchingOponent = true
       this.buttonsDisabled = true
-      this.$socket.client.emit('create',  {"playerId" : playerId, "playerName": this.$store.state.userData.usuario})
+      this.$socket.client.emit('create',  {"playerId" : playerId, "player": this.$store.state.userData})
       this.$router.push('game')
     },
     join(roomId){
       this.searchingOponent = true
       this.buttonsDisabled = true
-      this.$socket.client.emit('join',  {"roomId":roomId,"playerId" : localStorage.getItem('token'), "playerName": this.$store.state.userData.usuario})
+      this.$socket.client.emit('join',  {"roomId":roomId,"player" : this.$store.state.userData})
     }
   },
 }
