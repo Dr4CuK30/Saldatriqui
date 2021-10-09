@@ -44,7 +44,6 @@ export default {
             this.miTurno = true
         }else this.player = 2
         this.$socket.$subscribe('cargarTablero', payload => {
-            console.log(payload)
             const { tableroData, turno, evento } = payload
             this.tablero = tableroData
             if(evento){

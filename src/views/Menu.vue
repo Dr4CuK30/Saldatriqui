@@ -22,11 +22,21 @@
           <th v-if="!game.isFull"><button @click="join(index)">Unirse</button></th>
           <th class="roomFull" v-else><a href="">Lleno</a></th>
         </tr>
-
       </table>
-      
     </div>
-    <button class="iniciar" @click="createRoom" :disabled="buttonsDisabled">Crear Sala</button><br>
+    <div class="table-footer">
+        <button class="reload" @click="getRooms">
+          <font-awesome-icon icon="sync-alt" class="reloadIcon"/>
+        </button>
+    </div>
+    <button 
+      class="iniciar" 
+      @click="createRoom" 
+      :disabled="buttonsDisabled"
+    >
+      Crear Sala
+    </button>
+    <br>
     <button class="logout" @click="logout">Cerrar Sesión</button>
   </div>
 </template>
@@ -43,7 +53,6 @@ export default {
   },
   created(){
     this.$socket.$subscribe('start', payload => {
-      console.log(payload.roomId)
       localStorage.setItem('roomId', payload.roomId)
       this.$router.push('game')
     });
@@ -191,5 +200,16 @@ export default {
   .username {
     font-family:Righteous;
     color: red
+  }
+  .reload{
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  .reload .reloadIcon{
+    width: 30px;
+    height: 30px;
+  }
+  .table-footer{
+    width: 100vw;
   }
 </style>
