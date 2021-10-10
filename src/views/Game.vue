@@ -1,12 +1,38 @@
 <template>
-    <div class="tableContainer">
-        <GameTable :tableroBloqueado="!miTurno || winner" @selecciono="jugarTurno" :playerNumber="player" :tableData="tablero"/>
+    <div class="page">
+        <div class="game">
+            <div class="stats">
+                <h1 v-if="playersData.length == 2">
+                    <b class="p1">{{playersData[0].puntuacion}} - {{playersData[0].usuario}}</b> : <b class="p2">{{playersData[1].usuario}} - {{playersData[1].puntuacion}}</b>
+                </h1>
+            </div>
+            <div class="tableContainer">
+                <GameTable :tableroBloqueado="!miTurno || winner" @selecciono="jugarTurno" :playerNumber="player" :tableData="tablero"/>
+            </div>
+            <div class="options">
+                <button @click="volver" class="exit-btn">Salir</button>
+            </div>
+        </div>
+        <div class="chat">
+            <div class="chat-header">
+                <h2 class="chat-title">Room Chat</h2>
+                <hr>
+            </div>
+            <div class="messages">
+    
+            </div>
+            <div class="msg-input">
+                <hr>
+                <input>
+                <button>
+                    <font-awesome-icon icon="chevron-right" class="reloadIcon"/>
+                </button>
+            </div>
+        </div>
     </div>
+    <!-- Elementos flotantes -->
     <div v-if="winner" class="centerpoint">
         <FinishAlert :ganador="winner == player" @volver="volver" @jugarAgain="jugarAgain"/>
-    </div>
-    <div class="options">
-        <button @click="volver">Salir</button>
     </div>
     <div class="centerpoint">
         <SearchingPlayer v-show="turnoDe == 3"/>
@@ -29,7 +55,7 @@ export default {
             tablero: [[0,0,0],
                       [0,0,0],
                       [0,0,0]],
-            gameData: {},
+            playersData: [],
             miTurno: false,
             player: null,
             winner: null,
@@ -43,6 +69,9 @@ export default {
             this.player = 1
             this.miTurno = true
         }else this.player = 2
+        this.$socket.$subscribe('loadPlayersData', payload => {
+            this.playersData = payload
+        })
         this.$socket.$subscribe('cargarTablero', payload => {
             const { tableroData, turno, evento } = payload
             this.tablero = tableroData
@@ -82,12 +111,95 @@ export default {
 
 <style scoped>
     .centerpoint {
-        top: 50%;
-        left: 50%;
+        top: 53%;
+        left: 42%;
         position: absolute;
     }
     .tableContainer{
-        width: 100vw;
-        height: 70vh;
+        padding-top: 50px;
+        width: 100%;
+        height: 70%;
+    }
+    .game{
+        width: 75vw;
+        height: 100vh;
+    }
+    .options{
+        height: 15%;
+        background: rgba(0, 0, 0, 0.425);
+        text-align: center;
+        padding-top: 30px;
+    }
+    .stats{
+        height: 15%;
+        background: rgba(0, 0, 0, 0.425);
+        text-align: center;
+        padding-top: 25px 
+    }
+    .chat{
+        padding: 15px;
+        width: 25vw;
+        height: 100vh;
+        background: #0000006c;
+        color: white
+    }
+    .page{
+        display: flex;
+        font-family: Righteous;
+    }
+    .stats h1{
+        font-size: 45px;
+        color: white;
+    }
+    .p1{
+        color: rgb(204, 133, 0);
+    }
+    .p2{
+        color: rgb(89, 161, 18);
+    }
+    .exit-btn{
+        background-color: red;
+        color: white;
+        font-size: 30px;
+        padding: 7px 20px;
+    }
+    .exit-btn:hover{
+        background-color: rgb(197, 0, 0);
+    }
+    .chat-title{
+        text-align: center;
+        color: rgb(204, 133, 0);
+    }
+    hr{
+        display: block; height: 1px;
+        border: 0; border-top: 1px solid rgb(124, 124, 124);
+        margin: 1em 0; padding: 0;
+    }
+    .chat-header{
+        height: 8%;
+    }
+    .messages{
+        height: 83%;
+    }
+    .msg-input input{
+        border: 0;
+        font-size: 22px;
+        padding: 3px 5px;
+        border-radius: 5px;
+        width: 85%;
+    }
+    .msg-input button{
+        width: 15%;
+        height: 25PX;
+        background: rgb(89, 161, 18);
+        color: white;
+    }
+    .msg-input button:hover{
+        background: rgb(70, 126, 13);
+    }
+    button{
+        border: 0;
+        border-radius: 7px;
+        cursor: pointer;
     }
 </style>

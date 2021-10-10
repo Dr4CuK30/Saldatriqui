@@ -6,7 +6,7 @@ import VueSocketIOExt from 'vue-socket.io-extended';
 import { io } from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 
 const socket = io(
 	`${process.env.VUE_APP_API_URL}:${process.env.VUE_APP_API_PORT}`,
@@ -15,7 +15,7 @@ const socket = io(
 	}
 );
 
-library.add(faSyncAlt);
+library.add([faSyncAlt, faChevronRight]);
 
 createApp(App)
 	.component('font-awesome-icon', FontAwesomeIcon)
