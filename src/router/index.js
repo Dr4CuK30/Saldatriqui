@@ -23,7 +23,7 @@ const routes = [
 		path: '/menu',
 		meta: {
 			requiresAuth: true,
-			title: 'Saldatriqui',
+			title: 'Menu',
 		},
 		component: Menu,
 	},
@@ -44,11 +44,12 @@ router.beforeEach(async (to, from, next) => {
 	await store.dispatch('authJwt');
 	if (to.matched.some((record) => record.meta.requiresAuth)) {
 		if (store.state.auth) {
-			if(to.path == '/menu'){
-				if(localStorage.getItem('roomId')) next({path: '/game'})
-			}
-			else if(to.path == '/game'){
-				if(!localStorage.getItem('roomId')) next({path: '/menu'})
+			if (to.path == '/menu') {
+				if (localStorage.getItem('roomId'))
+					next({ path: '/game' });
+			} else if (to.path == '/game') {
+				if (!localStorage.getItem('roomId'))
+					next({ path: '/menu' });
 			}
 			next();
 		} else {

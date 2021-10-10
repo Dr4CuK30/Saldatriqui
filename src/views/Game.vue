@@ -19,12 +19,15 @@
                 <hr>
             </div>
             <div class="messages">
-    
+                <div :class="messageStyleProvider(message.playerNum)" v-for="(message, index) in messages" :key="message">
+                    <span v-if="validateTitleMsg(index, message.playerNum)">{{message.usuario}}:</span>
+                    <p>{{message.content}}</p>
+                </div>
             </div>
             <div class="msg-input">
                 <hr>
-                <input>
-                <button>
+                <input v-model="chatText" @keyup.enter="sendMessage">
+                <button @click="sendMessage">
                     <font-awesome-icon icon="chevron-right" class="reloadIcon"/>
                 </button>
             </div>
@@ -51,6 +54,7 @@ export default {
     },
     data(){
         return {
+            chatText: '',
             roomId: '',
             tablero: [[0,0,0],
                       [0,0,0],
@@ -60,6 +64,20 @@ export default {
             player: null,
             winner: null,
             turnoDe: 3,
+            messages: [
+                {
+                    usuario: null,
+                    playerNum: 3,
+                    content: 'hurtado se ha unido a la sala',
+                    date: Date.now()
+                },
+                {
+                    usuario: 'davids',
+                    playerNum: 1,
+                    content: 'hola mamabichos',
+                    date: Date.now()
+                },
+            ]
         }
     },
     created(){
@@ -70,7 +88,8 @@ export default {
             this.miTurno = true
         }else this.player = 2
         this.$socket.$subscribe('loadPlayersData', payload => {
-            this.playersData = payload
+            this.playersData = payload.players
+            this.messages = payload.chat
         })
         this.$socket.$subscribe('cargarTablero', payload => {
             const { tableroData, turno, evento } = payload
@@ -104,6 +123,31 @@ export default {
             this.turnoDe = 3
             this.winner = null
             this.$socket.client.emit('reiniciar', {roomId: this.roomId, playerId: this.player})
+        },
+        messageStyleProvider(num){
+            let classes = {'message': true}
+            if(num == this.player){
+                classes['player-msg'] = true
+            } else if (num == 3){
+                classes['server-msg']= true
+            } else {
+                classes['opponent-msg'] = true
+            }
+            return classes
+        },
+        validateTitleMsg(index, msgPlayerNum){
+            if(msgPlayerNum == 3) return false
+            if(index == 0) return true
+            return(index > 0 && this.messages[index-1].playerNum != msgPlayerNum) 
+        },
+        sendMessage(){
+            this.$socket.client.emit('enviarMensaje', {
+                roomId: this.roomId,
+                playerNum: this.player,
+                usuario: this.$store.state.userData.usuario,
+                content: this.chatText
+            })
+            this.chatText = ''
         }
     }
 }
@@ -180,6 +224,8 @@ export default {
     }
     .messages{
         height: 83%;
+        overflow-y: scroll;
+        padding-right: 10px;
     }
     .msg-input input{
         border: 0;
@@ -187,6 +233,7 @@ export default {
         padding: 3px 5px;
         border-radius: 5px;
         width: 85%;
+        outline: none;
     }
     .msg-input button{
         width: 15%;
@@ -201,5 +248,62 @@ export default {
         border: 0;
         border-radius: 7px;
         cursor: pointer;
+    }
+    .opponent-msg{
+        
+    }
+    .opponent-msg span{
+        color: rgb(70, 126, 13);
+    }
+
+    .server-msg{
+        text-align: center;
+        background-color: black;
+        color: gray;
+        padding: 2px;
+    }
+
+    .player-msg{
+        text-align: end;
+    }
+    .player-msg span{
+        color: rgb(204, 133, 0);
+    }
+    .message{
+        margin: 7px 0px;
+    }
+
+    ::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+    }
+    ::-webkit-scrollbar-button {
+    width: 0px;
+    height: 0px;
+    }
+    ::-webkit-scrollbar-thumb {
+    background: #e1e1e1;
+    border: 0px none #ffffff;
+    border-radius: 50px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+    background: #ffffff;
+    }
+    ::-webkit-scrollbar-thumb:active {
+    background: #000000;
+    }
+    ::-webkit-scrollbar-track {
+    background: #666666;
+    border: 0px none #ffffff;
+    border-radius: 50px;
+    }
+    ::-webkit-scrollbar-track:hover {
+    background: #666666;
+    }
+    ::-webkit-scrollbar-track:active {
+    background: #333333;
+    }
+    ::-webkit-scrollbar-corner {
+    background: transparent;
     }
 </style>
