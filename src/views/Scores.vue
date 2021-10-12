@@ -7,9 +7,9 @@
           <th>Jugador</th>
           <th>Puntaje</th>
         </tr>
-        <tr v-for="(jugador) in datosPrueba">
-          <th>{{jugador.jugador}}</th>
-          <th>{{jugador.puntaje}}</th>
+        <tr v-for="(jugador) in data">
+          <th>{{jugador.usuario}}</th>
+          <th>{{jugador.max_score}}</th>
         </tr>
       </table>
     </div>
@@ -25,49 +25,25 @@
 </template>
 
 <script>
+import getRoomsMethod from "../services/matches_scs"
+
 export default {
   name: "Scores",
   data(){
     return{
-      datosPrueba: [
-        {
-          jugador: "juanita",
-          puntaje: 300
-        },
-        {
-          jugador: "Jaime alimaña",
-          puntaje: 300
-        },
-        {
-          jugador: "Juan Robado",
-          puntaje: 0
-        },
-        {
-          jugador: "Saldamiguis",
-          puntaje: 20
-        },
-        {
-          jugador: "Santiago",
-          puntaje: 300
-        },
-        {
-          jugador: "Goku",
-          puntaje: 3000
-        },
-        {
-          jugador: "juanitas",
-          puntaje: 3002
-        },
-        {
-          jugador: "El raton perez",
-          puntaje: 20
-        },
-      ]
+      data: []
     }
+  },
+  created() {
+    this.getScores()
   },
   methods:{
     goBack(){
       this.$router.push('menu')
+    },
+    async getScores(){
+      this.data = await getRoomsMethod.getScores(this)
+
     }
   }
 }
