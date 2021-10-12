@@ -13,6 +13,13 @@
         </tr>
       </table>
     </div>
+    <button
+        class="iniciar"
+        @click="goBack"
+        :disabled="buttonsDisabled"
+    >
+      Volver al menú
+    </button>
 
   </div>
 </template>
@@ -56,6 +63,11 @@ export default {
           puntaje: 20
         },
       ]
+    }
+  },
+  methods:{
+    goBack(){
+      this.$router.push('menu')
     }
   }
 }
@@ -140,5 +152,26 @@ export default {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: white;
   font-size: 4rem;
+}
+
+button{
+  border: 0;
+  font-family: Righteous;
+  border-radius: 10px;
+  padding: 5px 10px 5px 10px;
+  margin-top: 10px;
+}
+
+.iniciar{
+  background-color: rgba(0, 0, 0, 0.459);
+
+  font-size: 60px;
+  font-weight: bold;
+  color: #EFBE42;
+  cursor: pointer;
+}
+
+.iniciar:hover{
+  background-color: rgba(0, 0, 0, 0.719);
 }
 </style>
