@@ -3,6 +3,7 @@ import Signin from '../views/Signin';
 import Game from '../views/Game';
 import Menu from '../views/Menu';
 import store from '../store';
+import Scores from "../views/Scores";
 const routes = [
 	{
 		path: '/signin',
@@ -26,6 +27,14 @@ const routes = [
 			title: 'Menu',
 		},
 		component: Menu,
+	},
+	{
+		path: '/puntajes',
+		meta: {
+			requiresAuth: true,
+			title: 'Puntajes'
+		},
+		component: Scores
 	},
 	{
 		path: '/:pathMatch(.*)*',

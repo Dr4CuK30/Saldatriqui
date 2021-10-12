@@ -29,13 +29,24 @@
           <font-awesome-icon icon="sync-alt" class="reloadIcon"/>
         </button>
     </div>
-    <button 
-      class="iniciar" 
-      @click="createRoom" 
-      :disabled="buttonsDisabled"
-    >
-      Crear Sala
-    </button>
+    <div class="buttons">
+      <button
+          class="iniciar"
+          @click="createRoom"
+          :disabled="buttonsDisabled"
+      >
+        Crear Sala
+      </button>
+      <button
+          class="iniciar"
+          @click="viewScores"
+          :disabled="buttonsDisabled"
+      >
+        Ver puntajes
+      </button>
+    </div>
+
+
     <br>
     <button class="logout" @click="logout">Cerrar Sesión</button>
   </div>
@@ -79,6 +90,9 @@ export default {
       this.searchingOponent = true
       this.buttonsDisabled = true
       this.$socket.client.emit('join',  {"roomId":roomId,"player" : this.$store.state.userData})
+    },
+    viewScores(){
+      this.$router.push('puntajes')
     }
   },
 }
@@ -95,6 +109,11 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 2em 4em;
+  }
+  .buttons{
+    display: flex;
+    justify-content: space-around;
+    width: 800px;
   }
 
   .menu button{
